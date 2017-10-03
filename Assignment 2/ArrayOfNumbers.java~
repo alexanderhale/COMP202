@@ -1,0 +1,264 @@
+/* Name: Alex Hale
+ * ID: 260672475
+ * Date: February 15, 2016 */
+
+// declare the class
+public class ArrayOfNumbers {
+  // declare the main method
+  public static void main(String[] args) {
+    int[] a = {2,3,5,1,2,3};
+    findMissingNum(6, a);
+    findMostFrequent(6, a);
+    int[] b = {1,5,1,3,4,2};
+    findMissingNum(5, b);
+    findMostFrequent(5, b);
+    int[] c = {8,7,4,3,5,7,3};
+    findMissingNum(9, c);
+    findMostFrequent(9, c);
+    int[] d = {0,0,0,0,0,0};
+    findMissingNum(12, d);
+    findMostFrequent(12, d);
+  }
+  
+  /* this method takes an integer array and an integer n, then finds which integers between
+   * 1 and n are not included in the array */
+  public static void findMissingNum(int n, int[] a) {
+    // check if array is empty, has no length, or is all zero
+    String printout = checkArray(a);
+    
+    // if the printout is invalid, add all the numbers from 1 to n to the printout
+    if (!printout.equals("")) {
+      printout += " You're missing ";
+      for (int i = 1; i <= n; i++) {
+        printout += i;
+        
+        // good grammar is fun!
+        if (i == n-1) {
+          printout += ", and ";
+        } else if (i < n-1) {
+          printout += ", ";
+        }
+      }
+      printout += ".";
+      
+      // print out the missing numbers (every integer from 1 to n)
+      System.out.println(printout);
+    } else {
+      // if the entry was valid, we can carry on with our check
+      // sort the array to make future operations easier
+      sort(a, 0, a.length - 1);
+      
+      // declare variables we'll use in the check
+      int[] missing = new int[n];      // an array to store all the missing numbers
+      int missingCounter = 0;          // a counter of the number of missing numbers
+      int x = 0;                       // the first of two indices to compare
+      int y = 0;                       // the second of two indices to compare
+      
+      /* if the sorted array doesn't have 1 as its first element, that means we're missing
+       * all the numbers from 1 to one less than the first element */
+      if (a[0] > 1) {
+        for (int i = 1; i < a[0]; i++) {
+          missing[i-1] = i;
+          missingCounter++;
+        }
+      }
+      
+      /* iterate through the array to check for other missing numbers. Stop iterating when
+       * we've reached the end of the array OR when we've reached n */
+      for (int i = 1; i <= n && i < a.length; i++) {
+        // take two values to compare
+        x = a[i-1];
+        y = a[i];
+        
+        // if there is a gap between two values, add it to the list of missing numbers
+        while (y != x && y != x+1) {
+          missing[missingCounter] = x + 1;
+          missingCounter++;
+          x++;
+        }
+      }
+      
+      /* if the end of the input was reached before reaching n, add the values between the
+       * end of the array and n to the array of missing numbers */
+      if (y < n) {
+        for (int z = y+1; z <= n; z++) {
+          missing[missingCounter] = z;
+          missingCounter++;
+        }
+      }
+      
+      // if the array of missing numbers is empty, there are no missing numbers
+      if (missingCounter == 0) {
+        printout += "No number is missing!";
+        System.out.println(printout);
+      } else {
+        // if the array isn't empty, there are some missing numbers to display
+        // sort the array
+        sort(missing, 0, missing.length-1); 
+        
+        // add the beginning of the message
+        printout = "You're missing ";
+        
+        // count the number of numbers printed to have good grammar!
+        int m = 0;
+        
+        // loop through the array of missing numbers
+        for (int i = 0; i < missing.length; i++) {
+          // add every number in the missing array that isn't a zero to the printout
+          if (missing[i] != 0) {
+            m++;
+            // add commas in the proper place for good grammar, yay!
+            if (m != 1) {
+              printout += ", ";
+            }
+            printout += missing[i];
+          }
+        }
+        // add a period for good grammar too!
+        printout += ".";
+        
+        // print out the message
+        System.out.println(printout);
+      }      
+    }
+  }
+  
+  /* this method takes an integer array and an integer n, then finds which integers between
+   * 1 and n repeated most often in the array */
+  public static void findMostFrequent(int n, int[] nums) {
+    // check if the array is empty
+    String printout = checkArray(nums);
+    
+    // if the array was empty, print out the error message we found
+    if (!printout.equals("")) {
+      System.out.println(printout);
+    } else {
+      /* if the array was valid, create an array to store the number of times each number 
+       * between 1 and n was repeated */
+      int[] timesRepeated = new int[n]; 
+      
+      /* Iterate through the given array. For each number, add one to the corresponding index
+       * in the timesRepeated array. */
+      for (int i = 0; i < nums.length; i++) {
+        timesRepeated[nums[i]-1]++;
+      }
+      
+      // create variables needed for the calculations
+      int mostRepeats = 0;              // the most that one integer has been repeated
+      int[] mostRepeated = new int[n];  // an array to store the integers tied for most repeated
+      int tiedMostRepeated = 0;         // how many integers are tied for most repeated
+      
+      // iterate through each index of the timesRepeated array
+      for (int i = 0; i < n; i++) {
+        if (timesRepeated[i] > mostRepeats) {
+          /* if the current index is higher than the present "high score" of repeats, change
+           * the "high score" and add the number associated with the current index (i+1) to the 
+           * mostRepeated array */
+          mostRepeats = timesRepeated[i];
+          
+          // we don't need to clear mostRepeated since we have the tiedMostRepeated counter
+          mostRepeated[0] = i+1;
+          tiedMostRepeated = 1;
+        } else if (timesRepeated[i] == mostRepeats) {
+          /* if the current index is equal to the present "high score", add the number
+           * associated with the current index (i+1) to the mostRepeated then add one to
+           * timesRepeated */
+          mostRepeated[tiedMostRepeated] = i+1;
+          tiedMostRepeated++;
+        }
+      }
+      
+      // if one number is repeated more than all the others, print the appropriate message
+      if (tiedMostRepeated == 1) {
+        System.out.println("The most repeated number is " + mostRepeated[0] + ".");
+      } else {
+        // If there are multiple numbers tied for most repeated, add them all to a printout
+        printout = "The most repeated numbers are ";
+        for (int i = 0; i < tiedMostRepeated; i++) {
+          printout += mostRepeated[i];
+          
+          // use the appropriate grammar at the appropriate points
+          if (i == tiedMostRepeated-2) {
+            printout += " and ";
+          } else if (i != tiedMostRepeated-1) {
+            printout += ", ";
+          }
+        }
+        printout += ".";
+        System.out.println(printout);
+      }
+    }
+  }
+  
+  // this method sorts integer arrays in increasing order
+  public static void sort(int[] a, int lowerBound, int upperBound) {
+    // declare the lower and upper bound of the region within the array you want sorted
+    int lowerIndex = lowerBound;
+    int upperIndex = upperBound;
+    
+    // find the value at the midpoint of the region being sorted
+    int pivot = a[lowerBound + (upperBound - lowerBound)/2];
+    
+    // iterate until the lower index reaches the upper index
+    while (lowerIndex <= upperIndex) {
+      /* if the value at the lower index is less than the value at the midpoint, move the lower
+       * index up one because that value is on the correct side of the midpoint */
+      while (a[lowerIndex] < pivot) {
+        lowerIndex++;
+      }
+      /* if the value at the upper index is greater than the value at the midpoint, move the
+       * upper index down one because that value is on the correct side of the midpoint */
+      while (a[upperIndex] > pivot) {
+        upperIndex--;
+      }
+      
+      if (lowerIndex <= upperIndex) {
+        /* if the lower index is on the correct side of the upper index OR it is equal to the
+         * upper index, then swap the lower index value with the upper index value*/
+        int temp = a[lowerIndex];
+        a[lowerIndex] = a[upperIndex];
+        a[upperIndex] = temp;
+        
+        /* the above lower and upper indices are now in the correct zone, so move the
+         * boundaries in by one */
+        lowerIndex++;
+        upperIndex--;
+      }
+    }
+    
+    /* if the current upper index is still greater than the initial lower index, rerun this
+     * entire method on the section of the array in between them to sort it */
+    if (upperIndex > lowerBound) {
+      sort(a, lowerBound, upperIndex);
+      
+    /* if the current lower index is still lower than the initial upper index, rerun this
+     * entire method on the section of the array in between them to sort it */
+    }
+    if (upperBound > lowerIndex) {
+      sort(a, lowerIndex, upperBound);
+    }
+  }
+  
+  /* This method checks to see if an integer array is empty, has no length, or is all zero, 
+   * then returns an appropriate message (or returns an empty string no problems are found) */
+  public static String checkArray(int[] a) {
+    if (a == null) {
+      return "There's nothing in your array!";
+    } else if (a.length == 0) {
+      return "Your array doesn't have a length!";
+    } else if (allZero(a)) {
+      return "Your array is all zero!";
+    }
+    return "";
+  }
+  
+  /* This method checks if an integer array has only elements that are zero. It could have 
+   * been put in the checkArray method, but the code is simpler this way */ 
+  public static boolean allZero(int[] a) {
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != 0)
+        return false;
+    }
+    return true;
+  }
+}

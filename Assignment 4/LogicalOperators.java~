@@ -1,0 +1,112 @@
+/* Name: Alex Hale
+ * ID: 260672475
+ * Date: April 12, 2016 */
+
+public class LogicalOperators {
+  public static void main(String[] args) {
+    boolean[] test = {true, false, true, false, true, false, true, false};
+    System.out.println(conjunctionIter(test));
+    System.out.println(conjunctionRec(test));
+    System.out.println(disjunctionIter(test));
+    System.out.println(disjunctionRec(test));
+    
+    System.out.println();
+    
+    boolean[] test1 = {true, true, true, true, true, false, false, false};
+    System.out.println(conjunctionIter(test1));
+    System.out.println(conjunctionRec(test1));
+    System.out.println(disjunctionIter(test1));
+    System.out.println(disjunctionRec(test1));
+    
+    System.out.println();
+    
+    boolean[] test2 = {false, false, false, false, false, false, false, false};
+    System.out.println(conjunctionIter(test2));
+    System.out.println(conjunctionRec(test2));
+    System.out.println(disjunctionIter(test2));
+    System.out.println(disjunctionRec(test2));
+    
+    System.out.println();
+    
+    boolean[] test3 = {true, true, true, true, true, true, true, true};
+    System.out.println(conjunctionIter(test3));
+    System.out.println(conjunctionRec(test3));
+    System.out.println(disjunctionIter(test3));
+    System.out.println(disjunctionRec(test3));
+  }
+  
+  public static boolean conjunctionIter(boolean[] in) {
+    if (in.length == 0) {
+      System.out.println("The input array was empty.");
+      return true;   //RE: what should be returned here?
+    } else if (in.length == 1) {
+      return in[0];
+    } else {
+      boolean result = in[0] && in[1];
+      for (int i = 2; i < in.length; i++) {
+        result = (result && in[i]);
+      }
+      return result;
+    }
+  }
+  
+  public static boolean conjunctionRec(boolean[] in) {
+    if (in.length == 0) {
+      System.out.println("The input array was empty.");
+      return true;   //RE: what should be returned here?
+    } else if (in.length == 1) {
+      return in[0];
+    } else {
+      return conjunctionRecHelper(in, in.length - 1);
+    }
+  }
+  
+  /* the recursion is done in a separate method for simplicity, and because we need an int to be passed through each 
+   * recursion, which isn't allowed in the conjunctionRec method
+   * */
+  public static boolean conjunctionRecHelper(boolean[] in, int n) {
+    // base case: when the recursion has reached the innermost set of brackets, return the easily calculated value there
+    if (n == 1) {
+      return (in[0] && in[1]);
+    }
+    
+    // recursive step: continually move one bracket inward
+    return conjunctionRecHelper(in, n - 1) && in[n];
+  }
+  
+  public static boolean disjunctionIter(boolean[] in) {
+    if (in.length == 0) {
+      System.out.println("The input array was empty.");
+      return true;   //RE: what should be returned here?
+    } else if (in.length == 1) {
+      return in[0];
+    } else {
+      boolean result = (in[0] || in[1]);
+      for (int i = 2; i < in.length - 1; i++) {
+        result = (result || in[i]);
+      }
+      return result;
+    }
+  }
+  
+  public static boolean disjunctionRec(boolean[] in) {
+    if (in.length == 0) {
+      System.out.println("The input array was empty.");
+      return true;   //RE: what should be returned here?
+    } else if (in.length == 1) {
+      return in[0];
+    } else {
+      return disjunctionRecHelper(in, in.length - 1);
+    }
+  }
+  
+  public static boolean disjunctionRecHelper(boolean[] in, int n) {
+    // base case
+    if (n == 1) {
+      return (in[0] || in[1]);
+    }
+    
+    // recursive case
+    return (disjunctionRecHelper(in, n - 1) || in[n]);
+  }
+}
